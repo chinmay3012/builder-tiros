@@ -35,3 +35,28 @@ export const listOrdersForUser: RequestHandler = async (req, res) => {
     res.status(500).json({ error: err?.message || "Failed to list orders" });
   }
 };
+
+export const listAllOrders: RequestHandler = async (_req, res) => {
+  try {
+    const { orders } = await getCollections();
+    const docs = await orders.find({}, { projection: { _id: 0 } }).sort({ createdAt: -1 }).limit(200).toArray();
+    res.json({ orders: docs });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Failed to list orders" });
+  }
+};
+
+export const updateOrderStatus: RequestHandler = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { status } = req.body as { status: Order["status"] };
+    const { orders } = await getCollections();
+    const now = new Date().toISOString();
+    await orders.updateOne({ _id: id }, { $set: { status, updatedAt: now } });
+    const updated = await orders.findOne({ _id: id }, { projection: { _id: 0 } });
+    if (!updated) return res.status(404).json({ error: "Order not found" });
+    res.json({ order: updated });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Failed to update order" });
+  }
+};
