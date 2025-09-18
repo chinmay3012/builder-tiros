@@ -6,6 +6,8 @@ import { listProducts, createProduct, deleteProduct, updateProduct, listCategori
 import { upsertUser, getUser } from "./routes/users";
 import { getCart, addToCart, removeFromCart } from "./routes/carts";
 import { createOrder, listOrdersForUser, listAllOrders, updateOrderStatus } from "./routes/orders";
+import { register, login, me } from "./routes/auth";
+import { requireAuth, requireAdmin } from "./middleware/auth";
 
 export function createServer() {
   const app = express();
@@ -24,14 +26,19 @@ export function createServer() {
   // Demo
   app.get("/api/demo", handleDemo);
 
+  // Auth
+  app.post("/api/auth/register", register);
+  app.post("/api/auth/login", login);
+  app.get("/api/auth/me", me);
+
   // Product APIs
   app.get("/api/products", listProducts);
   app.get("/api/categories", listCategories);
-  app.post("/api/admin/products", createProduct);
-  app.patch("/api/admin/products/:id", updateProduct);
-  app.delete("/api/admin/products/:id", deleteProduct);
+  app.post("/api/admin/products", requireAuth, requireAdmin, createProduct);
+  app.patch("/api/admin/products/:id", requireAuth, requireAdmin, updateProduct);
+  app.delete("/api/admin/products/:id", requireAuth, requireAdmin, deleteProduct);
 
-  // User APIs (Auth0-ready)
+  // User APIs
   app.post("/api/users/upsert", upsertUser);
   app.get("/api/users/:id", getUser);
 
@@ -43,8 +50,8 @@ export function createServer() {
   // Orders
   app.post("/api/orders", createOrder);
   app.get("/api/orders/:userId", listOrdersForUser);
-  app.get("/api/admin/orders", listAllOrders);
-  app.patch("/api/admin/orders/:id/status", updateOrderStatus);
+  app.get("/api/admin/orders", requireAuth, requireAdmin, listAllOrders);
+  app.patch("/api/admin/orders/:id/status", requireAuth, requireAdmin, updateOrderStatus);
 
   return app;
 }
