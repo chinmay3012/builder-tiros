@@ -15,6 +15,7 @@ import AdminLogin from "@/pages/AdminLogin";
 import CartPage from "@/pages/Cart";
 import CheckoutPage from "@/pages/Checkout";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <AuthProvider>
+        <CartProvider>
         <BrowserRouter>
           <Routes>
             <Route element={<SiteLayout />}>
@@ -46,6 +48,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+        </CartProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
