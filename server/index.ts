@@ -3,6 +3,9 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { listProducts, createProduct } from "./routes/products";
+import { upsertUser, getUser } from "./routes/users";
+import { getCart, addToCart, removeFromCart } from "./routes/carts";
+import { createOrder, listOrdersForUser } from "./routes/orders";
 
 export function createServer() {
   const app = express();
@@ -24,6 +27,19 @@ export function createServer() {
   // Product APIs
   app.get("/api/products", listProducts);
   app.post("/api/admin/products", createProduct);
+
+  // User APIs (Auth0-ready)
+  app.post("/api/users/upsert", upsertUser);
+  app.get("/api/users/:id", getUser);
+
+  // Cart APIs
+  app.get("/api/cart/:userId", getCart);
+  app.post("/api/cart/:userId/add", addToCart);
+  app.post("/api/cart/:userId/remove", removeFromCart);
+
+  // Orders
+  app.post("/api/orders", createOrder);
+  app.get("/api/orders/:userId", listOrdersForUser);
 
   return app;
 }
