@@ -10,9 +10,16 @@ function Hero() {
         <div className="mt-6 overflow-hidden rounded-2xl border bg-black text-white">
           <div className="relative p-8 md:p-14">
             <div className="absolute right-6 top-6">
-              <Link to="/shop" className="inline-block rounded-md bg-brand px-4 py-2 font-medium text-black uppercase tracking-wide">Explore Now</Link>
+              <Link
+                to="/shop"
+                className="inline-block rounded-md bg-brand px-4 py-2 font-medium text-black uppercase tracking-wide"
+              >
+                Explore Now
+              </Link>
             </div>
-            <h1 className="font-display text-[40px] md:text-[88px] leading-none tracking-[0.25em]">TIROS</h1>
+            <h1 className="font-display text-[40px] md:text-[88px] leading-none tracking-[0.25em]">
+              TIROS
+            </h1>
             <div className="mt-6 h-56 md:h-80 rounded-xl bg-neutral-900" />
           </div>
         </div>
@@ -37,14 +44,21 @@ export default function Index() {
 
       <section className="container py-12">
         <div className="mb-6 h-2 w-40 bg-black" />
-        <h2 className="text-center font-display text-2xl tracking-[0.25em]">BEST SELLER</h2>
+        <h2 className="text-center font-display text-2xl tracking-[0.25em]">
+          BEST SELLER
+        </h2>
         <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {data?.products?.slice(0, 8).map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
         <div className="mt-8 text-center">
-          <Link to="/shop" className="inline-block rounded-md border px-5 py-2 uppercase tracking-wide">View All</Link>
+          <Link
+            to="/shop"
+            className="inline-block rounded-md border px-5 py-2 uppercase tracking-wide"
+          >
+            View All
+          </Link>
         </div>
       </section>
 

@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CreateProductRequest, CreateProductResponse, ListProductsResponse, Order } from "@shared/api";
+import {
+  CreateProductRequest,
+  CreateProductResponse,
+  ListProductsResponse,
+  Order,
+} from "@shared/api";
 import { useState } from "react";
 
 export default function Admin() {
@@ -38,7 +43,9 @@ export default function Admin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = (await res.json()) as CreateProductResponse & { error?: string };
+      const data = (await res.json()) as CreateProductResponse & {
+        error?: string;
+      };
       if (!res.ok) throw new Error(data.error || "Failed to create product");
       return data;
     },
@@ -50,7 +57,9 @@ export default function Admin() {
 
   const del = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/products/${id}`, {
+        method: "DELETE",
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to delete product");
       return data;
@@ -58,7 +67,10 @@ export default function Admin() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
   });
 
-  function update<K extends keyof CreateProductRequest>(key: K, value: CreateProductRequest[K]) {
+  function update<K extends keyof CreateProductRequest>(
+    key: K,
+    value: CreateProductRequest[K],
+  ) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
@@ -72,15 +84,29 @@ export default function Admin() {
           <div className="space-y-4">
             <div>
               <label className="text-sm">Title</label>
-              <input className="mt-1 w-full h-10 rounded-md border bg-background px-3" value={form.title} onChange={(e) => update("title", e.target.value)} />
+              <input
+                className="mt-1 w-full h-10 rounded-md border bg-background px-3"
+                value={form.title}
+                onChange={(e) => update("title", e.target.value)}
+              />
             </div>
             <div>
               <label className="text-sm">Price</label>
-              <input type="number" className="mt-1 w-full h-10 rounded-md border bg-background px-3" value={form.price} onChange={(e) => update("price", Number(e.target.value))} />
+              <input
+                type="number"
+                className="mt-1 w-full h-10 rounded-md border bg-background px-3"
+                value={form.price}
+                onChange={(e) => update("price", Number(e.target.value))}
+              />
             </div>
             <div>
               <label className="text-sm">Category</label>
-              <input list="cat-list" className="mt-1 w-full h-10 rounded-md border bg-background px-3" value={form.category} onChange={(e) => update("category", e.target.value)} />
+              <input
+                list="cat-list"
+                className="mt-1 w-full h-10 rounded-md border bg-background px-3"
+                value={form.category}
+                onChange={(e) => update("category", e.target.value)}
+              />
               <datalist id="cat-list">
                 {categories.data?.map((c) => (
                   <option key={c} value={c} />
@@ -89,26 +115,63 @@ export default function Admin() {
             </div>
             <div>
               <label className="text-sm">Inventory</label>
-              <input type="number" className="mt-1 w-full h-10 rounded-md border bg-background px-3" value={form.inventory ?? 0} onChange={(e) => update("inventory", Number(e.target.value))} />
+              <input
+                type="number"
+                className="mt-1 w-full h-10 rounded-md border bg-background px-3"
+                value={form.inventory ?? 0}
+                onChange={(e) => update("inventory", Number(e.target.value))}
+              />
             </div>
             <div>
               <label className="text-sm">Description</label>
-              <textarea className="mt-1 w-full min-h-24 rounded-md border bg-background px-3 py-2" value={form.description} onChange={(e) => update("description", e.target.value)} />
+              <textarea
+                className="mt-1 w-full min-h-24 rounded-md border bg-background px-3 py-2"
+                value={form.description}
+                onChange={(e) => update("description", e.target.value)}
+              />
             </div>
             <div>
               <label className="text-sm">Add image URL</label>
               <div className="mt-1 flex gap-2">
-                <input className="flex-1 h-10 rounded-md border bg-background px-3" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." />
-                <button type="button" className="h-10 px-4 rounded-md bg-foreground text-background" onClick={() => {
-                  if (!imageUrl) return; update("images", [...(form.images || []), imageUrl]); setImageUrl("");
-                }}>Add</button>
+                <input
+                  className="flex-1 h-10 rounded-md border bg-background px-3"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://..."
+                />
+                <button
+                  type="button"
+                  className="h-10 px-4 rounded-md bg-foreground text-background"
+                  onClick={() => {
+                    if (!imageUrl) return;
+                    update("images", [...(form.images || []), imageUrl]);
+                    setImageUrl("");
+                  }}
+                >
+                  Add
+                </button>
               </div>
               {form.images && form.images.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-2">
                   {form.images.map((u, i) => (
                     <div key={u + i} className="relative">
-                      <img src={u} alt="product" className="h-16 w-16 object-cover rounded" />
-                      <button type="button" className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full h-5 w-5 text-xs" onClick={() => update("images", form.images!.filter((x) => x !== u))}>×</button>
+                      <img
+                        src={u}
+                        alt="product"
+                        className="h-16 w-16 object-cover rounded"
+                      />
+                      <button
+                        type="button"
+                        className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full h-5 w-5 text-xs"
+                        onClick={() =>
+                          update(
+                            "images",
+                            form.images!.filter((x) => x !== u),
+                          )
+                        }
+                      >
+                        ×
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -121,7 +184,11 @@ export default function Admin() {
             >
               {create.isPending ? "Saving…" : "Create Product"}
             </button>
-            {create.isError && <div className="text-destructive text-sm">{(create.error as Error).message}</div>}
+            {create.isError && (
+              <div className="text-destructive text-sm">
+                {(create.error as Error).message}
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -129,12 +196,22 @@ export default function Admin() {
       <section>
         <h2 className="font-semibold mb-3">Recent products</h2>
         {list.isLoading && <div>Loading…</div>}
-        {list.error && <div className="text-destructive">{String((list.error as Error).message)}</div>}
+        {list.error && (
+          <div className="text-destructive">
+            {String((list.error as Error).message)}
+          </div>
+        )}
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
           {list.data?.products?.map((p) => (
             <div key={p.id} className="rounded-lg border p-3">
               <div className="aspect-square bg-muted rounded mb-3 overflow-hidden relative">
-                {p.images[0] && <img src={p.images[0]} className="h-full w-full object-cover" alt={p.title} />}
+                {p.images[0] && (
+                  <img
+                    src={p.images[0]}
+                    className="h-full w-full object-cover"
+                    alt={p.title}
+                  />
+                )}
                 <button
                   className="absolute top-2 right-2 rounded-md bg-destructive text-destructive-foreground h-8 px-2 text-xs"
                   onClick={() => del.mutate(p.id)}
@@ -164,12 +241,24 @@ function AdminOrders() {
     queryFn: async () => {
       const r = await fetch("/api/admin/orders");
       const d = await r.json();
-      return d.orders as Array<{ id: string; userId: string; total: number; status: Order["status"]; createdAt: string }>;
+      return d.orders as Array<{
+        id: string;
+        userId: string;
+        total: number;
+        status: Order["status"];
+        createdAt: string;
+      }>;
     },
   });
 
   const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: Order["status"] }) => {
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: Order["status"];
+    }) => {
       const r = await fetch(`/api/admin/orders/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -183,7 +272,12 @@ function AdminOrders() {
   });
 
   if (orders.isLoading) return <div>Loading…</div>;
-  if (orders.error) return <div className="text-destructive">{String((orders.error as Error).message)}</div>;
+  if (orders.error)
+    return (
+      <div className="text-destructive">
+        {String((orders.error as Error).message)}
+      </div>
+    );
 
   return (
     <div className="overflow-auto rounded-lg border">
@@ -207,14 +301,31 @@ function AdminOrders() {
                 <select
                   className="h-8 rounded border bg-background px-2"
                   value={o.status}
-                  onChange={(e) => updateStatus.mutate({ id: o.id, status: e.target.value as Order["status"] })}
+                  onChange={(e) =>
+                    updateStatus.mutate({
+                      id: o.id,
+                      status: e.target.value as Order["status"],
+                    })
+                  }
                 >
-                  {(["pending","paid","shipped","completed","canceled"] as Order["status"][]).map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                  {(
+                    [
+                      "pending",
+                      "paid",
+                      "shipped",
+                      "completed",
+                      "canceled",
+                    ] as Order["status"][]
+                  ).map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
                   ))}
                 </select>
               </td>
-              <td className="p-2 text-right text-xs text-muted-foreground">{new Date(o.createdAt).toLocaleString()}</td>
+              <td className="p-2 text-right text-xs text-muted-foreground">
+                {new Date(o.createdAt).toLocaleString()}
+              </td>
             </tr>
           ))}
         </tbody>

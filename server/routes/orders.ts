@@ -20,7 +20,8 @@ export const createOrder: RequestHandler = async (req, res) => {
     const resp: CreateOrderResponse = { order };
     res.status(201).json(resp);
   } catch (err: any) {
-    if (err?.message?.includes("MONGODB_URI")) return res.status(500).json({ error: "Database not configured" });
+    if (err?.message?.includes("MONGODB_URI"))
+      return res.status(500).json({ error: "Database not configured" });
     res.status(500).json({ error: err?.message || "Failed to create order" });
   }
 };
@@ -29,7 +30,10 @@ export const listOrdersForUser: RequestHandler = async (req, res) => {
   try {
     const userId = req.params.userId;
     const { orders } = await getCollections();
-    const docs = await orders.find({ userId }, { projection: { _id: 0 } }).sort({ createdAt: -1 }).toArray();
+    const docs = await orders
+      .find({ userId }, { projection: { _id: 0 } })
+      .sort({ createdAt: -1 })
+      .toArray();
     res.json({ orders: docs });
   } catch (err: any) {
     res.status(500).json({ error: err?.message || "Failed to list orders" });
@@ -39,7 +43,11 @@ export const listOrdersForUser: RequestHandler = async (req, res) => {
 export const listAllOrders: RequestHandler = async (_req, res) => {
   try {
     const { orders } = await getCollections();
-    const docs = await orders.find({}, { projection: { _id: 0 } }).sort({ createdAt: -1 }).limit(200).toArray();
+    const docs = await orders
+      .find({}, { projection: { _id: 0 } })
+      .sort({ createdAt: -1 })
+      .limit(200)
+      .toArray();
     res.json({ orders: docs });
   } catch (err: any) {
     res.status(500).json({ error: err?.message || "Failed to list orders" });
@@ -53,7 +61,10 @@ export const updateOrderStatus: RequestHandler = async (req, res) => {
     const { orders } = await getCollections();
     const now = new Date().toISOString();
     await orders.updateOne({ _id: id }, { $set: { status, updatedAt: now } });
-    const updated = await orders.findOne({ _id: id }, { projection: { _id: 0 } });
+    const updated = await orders.findOne(
+      { _id: id },
+      { projection: { _id: 0 } },
+    );
     if (!updated) return res.status(404).json({ error: "Order not found" });
     res.json({ order: updated });
   } catch (err: any) {

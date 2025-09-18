@@ -17,13 +17,17 @@ export const upsertUser: RequestHandler = async (req, res) => {
     };
     await users.updateOne(
       { _id: payload.id },
-      { $setOnInsert: { createdAt: now }, $set: { ...userDoc, updatedAt: now, _id: payload.id } },
+      {
+        $setOnInsert: { createdAt: now },
+        $set: { ...userDoc, updatedAt: now, _id: payload.id },
+      },
       { upsert: true },
     );
     const result: UpsertUserResponse = { user: userDoc };
     res.json(result);
   } catch (err: any) {
-    if (err?.message?.includes("MONGODB_URI")) return res.status(500).json({ error: "Database not configured" });
+    if (err?.message?.includes("MONGODB_URI"))
+      return res.status(500).json({ error: "Database not configured" });
     res.status(500).json({ error: err?.message || "Failed to upsert user" });
   }
 };

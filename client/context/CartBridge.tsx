@@ -5,7 +5,9 @@ export default function CartBridge() {
   const { add } = useCart();
   useEffect(() => {
     (window as any).addToCart = add;
-    return () => { delete (window as any).addToCart; };
+    return () => {
+      delete (window as any).addToCart;
+    };
   }, [add]);
   return null;
 }

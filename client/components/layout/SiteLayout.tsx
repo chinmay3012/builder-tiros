@@ -14,7 +14,9 @@ function Header() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/90 border-b">
       <div className="container flex h-14 items-center justify-between">
-        <Link to="/" className="font-display tracking-[0.25em] text-2xl">TIROS</Link>
+        <Link to="/" className="font-display tracking-[0.25em] text-2xl">
+          TIROS
+        </Link>
         <nav className="flex items-center gap-6 text-sm">
           {nav.map((n) => (
             <Link
@@ -47,20 +49,41 @@ function Footer() {
         <div>
           <div className="font-semibold mb-3">Menu</div>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/shop" className="hover:underline">Best Sellers</Link></li>
-            <li><Link to="/shop" className="hover:underline">New Arrivals</Link></li>
-            <li><Link to="/shop" className="hover:underline">Sale</Link></li>
+            <li>
+              <Link to="/shop" className="hover:underline">
+                Best Sellers
+              </Link>
+            </li>
+            <li>
+              <Link to="/shop" className="hover:underline">
+                New Arrivals
+              </Link>
+            </li>
+            <li>
+              <Link to="/shop" className="hover:underline">
+                Sale
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
           <div className="font-semibold mb-3">Newsletter</div>
           <form className="flex gap-2">
-            <input type="email" required placeholder="E-mail address" className="flex-1 h-10 rounded-md border bg-background px-3" />
-            <button className="h-10 px-4 rounded-md bg-foreground text-background uppercase tracking-wide">Save</button>
+            <input
+              type="email"
+              required
+              placeholder="E-mail address"
+              className="flex-1 h-10 rounded-md border bg-background px-3"
+            />
+            <button className="h-10 px-4 rounded-md bg-foreground text-background uppercase tracking-wide">
+              Save
+            </button>
           </form>
         </div>
       </div>
-      <div className="border-t py-4 text-xs text-muted-foreground text-center">© {new Date().getFullYear()} Tiros</div>
+      <div className="border-t py-4 text-xs text-muted-foreground text-center">
+        © {new Date().getFullYear()} Tiros
+      </div>
     </footer>
   );
 }

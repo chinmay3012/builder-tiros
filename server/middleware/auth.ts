@@ -1,7 +1,11 @@
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 
-export interface AuthUser { id: string; email: string; role: "user" | "admin" }
+export interface AuthUser {
+  id: string;
+  email: string;
+  role: "user" | "admin";
+}
 
 export const requireAuth: RequestHandler = (req, res, next) => {
   try {
@@ -21,6 +25,7 @@ export const requireAuth: RequestHandler = (req, res, next) => {
 export const requireAdmin: RequestHandler = (req, res, next) => {
   const user = (req as any).user as AuthUser | undefined;
   if (!user) return res.status(401).json({ error: "Unauthorized" });
-  if (user.role !== "admin") return res.status(403).json({ error: "Forbidden" });
+  if (user.role !== "admin")
+    return res.status(403).json({ error: "Forbidden" });
   next();
 };

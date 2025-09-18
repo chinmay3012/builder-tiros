@@ -14,9 +14,15 @@ export default function Shop() {
 
   return (
     <div className="container py-10">
-      <h1 className="font-display text-3xl tracking-[0.25em] mb-6">BEST SELLERS</h1>
+      <h1 className="font-display text-3xl tracking-[0.25em] mb-6">
+        BEST SELLERS
+      </h1>
       {isLoading && <div>Loading products…</div>}
-      {error && <div className="text-destructive">{String((error as Error).message)}</div>}
+      {error && (
+        <div className="text-destructive">
+          {String((error as Error).message)}
+        </div>
+      )}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {data?.products?.map((p) => (
           <ProductCard key={p.id} product={p} />

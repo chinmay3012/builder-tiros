@@ -90,9 +90,22 @@ export interface UpsertUserRequest {
   picture?: string;
 }
 
-export interface UpsertUserResponse { user: User }
+export interface UpsertUserResponse {
+  user: User;
+}
 
-export interface GetCartResponse { cart: Cart }
-export interface ModifyCartRequest { productId: string; quantity: number }
-export interface CreateOrderRequest { userId: string; items: OrderItem[]; total: number }
-export interface CreateOrderResponse { order: Order }
+export interface GetCartResponse {
+  cart: Cart;
+}
+export interface ModifyCartRequest {
+  productId: string;
+  quantity: number;
+}
+export interface CreateOrderRequest {
+  userId: string;
+  items: OrderItem[];
+  total: number;
+}
+export interface CreateOrderResponse {
+  order: Order;
+}
