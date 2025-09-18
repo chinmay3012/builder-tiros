@@ -26,6 +26,9 @@ export async function getCollections(): Promise<Collections> {
   const database = await getDb();
   return {
     products: database.collection("products"),
+    users: database.collection("users"),
+    carts: database.collection("carts"),
+    orders: database.collection("orders"),
   };
 }
 
