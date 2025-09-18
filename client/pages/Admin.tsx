@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CreateProductRequest, CreateProductResponse, ListProductsResponse } from "@shared/api";
+import { CreateProductRequest, CreateProductResponse, ListProductsResponse, Order } from "@shared/api";
 import { useState } from "react";
 
 export default function Admin() {
@@ -22,6 +22,15 @@ export default function Admin() {
     },
   });
 
+  const categories = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/categories");
+      const data = (await res.json()) as { categories: string[] };
+      return data.categories;
+    },
+  });
+
   const create = useMutation({
     mutationFn: async (payload: CreateProductRequest) => {
       const res = await fetch("/api/admin/products", {
@@ -31,6 +40,19 @@ export default function Admin() {
       });
       const data = (await res.json()) as CreateProductResponse & { error?: string };
       if (!res.ok) throw new Error(data.error || "Failed to create product");
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["products"] });
+      qc.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+
+  const del = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete product");
       return data;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
@@ -58,7 +80,12 @@ export default function Admin() {
             </div>
             <div>
               <label className="text-sm">Category</label>
-              <input className="mt-1 w-full h-10 rounded-md border bg-background px-3" value={form.category} onChange={(e) => update("category", e.target.value)} />
+              <input list="cat-list" className="mt-1 w-full h-10 rounded-md border bg-background px-3" value={form.category} onChange={(e) => update("category", e.target.value)} />
+              <datalist id="cat-list">
+                {categories.data?.map((c) => (
+                  <option key={c} value={c} />
+                ))}
+              </datalist>
             </div>
             <div>
               <label className="text-sm">Inventory</label>
@@ -106,8 +133,14 @@ export default function Admin() {
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
           {list.data?.products?.map((p) => (
             <div key={p.id} className="rounded-lg border p-3">
-              <div className="aspect-square bg-muted rounded mb-3 overflow-hidden">
+              <div className="aspect-square bg-muted rounded mb-3 overflow-hidden relative">
                 {p.images[0] && <img src={p.images[0]} className="h-full w-full object-cover" alt={p.title} />}
+                <button
+                  className="absolute top-2 right-2 rounded-md bg-destructive text-destructive-foreground h-8 px-2 text-xs"
+                  onClick={() => del.mutate(p.id)}
+                >
+                  Delete
+                </button>
               </div>
               <div className="text-sm font-medium">{p.title}</div>
               <div className="text-xs text-muted-foreground">{p.category}</div>
@@ -116,6 +149,76 @@ export default function Admin() {
           ))}
         </div>
       </section>
+      <section className="lg:col-span-2">
+        <h2 className="font-semibold mt-10 mb-3">Orders</h2>
+        <AdminOrders />
+      </section>
+    </div>
+  );
+}
+
+function AdminOrders() {
+  const qc = useQueryClient();
+  const orders = useQuery({
+    queryKey: ["admin-orders"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/orders");
+      const d = await r.json();
+      return d.orders as Array<{ id: string; userId: string; total: number; status: Order["status"]; createdAt: string }>;
+    },
+  });
+
+  const updateStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: Order["status"] }) => {
+      const r = await fetch(`/api/admin/orders/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || "Failed to update status");
+      return d;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-orders"] }),
+  });
+
+  if (orders.isLoading) return <div>Loading…</div>;
+  if (orders.error) return <div className="text-destructive">{String((orders.error as Error).message)}</div>;
+
+  return (
+    <div className="overflow-auto rounded-lg border">
+      <table className="min-w-[600px] w-full text-sm">
+        <thead className="bg-muted/50">
+          <tr>
+            <th className="p-2 text-left">Order</th>
+            <th className="p-2 text-left">User</th>
+            <th className="p-2 text-left">Total</th>
+            <th className="p-2 text-left">Status</th>
+            <th className="p-2" />
+          </tr>
+        </thead>
+        <tbody>
+          {orders.data?.map((o) => (
+            <tr key={o.id} className="border-t">
+              <td className="p-2">{o.id}</td>
+              <td className="p-2">{o.userId}</td>
+              <td className="p-2">${o.total.toFixed(2)}</td>
+              <td className="p-2">
+                <select
+                  className="h-8 rounded border bg-background px-2"
+                  value={o.status}
+                  onChange={(e) => updateStatus.mutate({ id: o.id, status: e.target.value as Order["status"] })}
+                >
+                  {(["pending","paid","shipped","completed","canceled"] as Order["status"][]).map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </td>
+              <td className="p-2 text-right text-xs text-muted-foreground">{new Date(o.createdAt).toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
