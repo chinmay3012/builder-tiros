@@ -16,6 +16,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <div className="text-sm uppercase tracking-wide">{product.title}</div>
         <div className="text-xs text-muted-foreground">{product.category}</div>
         <div className="mt-1 font-semibold">${product.price.toFixed(2)}</div>
+        <a href="#" onClick={(e) => { e.preventDefault(); (window as any).addToCart?.({ id: product.id, title: product.title, price: product.price, image, quantity: 1 }); }} className="mt-2 inline-block rounded-md border px-3 py-1 text-xs uppercase tracking-wide">Add to Cart</a>
       </div>
     </div>
   );
