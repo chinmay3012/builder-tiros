@@ -54,5 +54,8 @@ export function createServer() {
   app.get("/api/admin/orders", requireAuth, requireAdmin, listAllOrders);
   app.patch("/api/admin/orders/:id/status", requireAuth, requireAdmin, updateOrderStatus);
 
+  // Uploads
+  app.post("/api/admin/upload", requireAuth, requireAdmin, uploadFromUrl);
+
   return app;
 }
