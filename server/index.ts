@@ -8,6 +8,7 @@ import { getCart, addToCart, removeFromCart } from "./routes/carts";
 import { createOrder, listOrdersForUser, listAllOrders, updateOrderStatus } from "./routes/orders";
 import { register, login, me } from "./routes/auth";
 import { requireAuth, requireAdmin } from "./middleware/auth";
+import { uploadFromUrl } from "./routes/upload";
 
 export function createServer() {
   const app = express();
