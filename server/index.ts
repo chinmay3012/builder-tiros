@@ -2,10 +2,10 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { listProducts, createProduct } from "./routes/products";
+import { listProducts, createProduct, deleteProduct, updateProduct, listCategories } from "./routes/products";
 import { upsertUser, getUser } from "./routes/users";
 import { getCart, addToCart, removeFromCart } from "./routes/carts";
-import { createOrder, listOrdersForUser } from "./routes/orders";
+import { createOrder, listOrdersForUser, listAllOrders, updateOrderStatus } from "./routes/orders";
 
 export function createServer() {
   const app = express();
