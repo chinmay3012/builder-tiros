@@ -26,7 +26,10 @@ export function createServer() {
 
   // Product APIs
   app.get("/api/products", listProducts);
+  app.get("/api/categories", listCategories);
   app.post("/api/admin/products", createProduct);
+  app.patch("/api/admin/products/:id", updateProduct);
+  app.delete("/api/admin/products/:id", deleteProduct);
 
   // User APIs (Auth0-ready)
   app.post("/api/users/upsert", upsertUser);
@@ -40,6 +43,8 @@ export function createServer() {
   // Orders
   app.post("/api/orders", createOrder);
   app.get("/api/orders/:userId", listOrdersForUser);
+  app.get("/api/admin/orders", listAllOrders);
+  app.patch("/api/admin/orders/:id/status", updateOrderStatus);
 
   return app;
 }
