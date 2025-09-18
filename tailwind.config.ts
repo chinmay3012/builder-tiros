@@ -57,6 +57,10 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        brand: "hsl(var(--brand))",
+      },
+      fontFamily: {
+        display: ["Orbitron", "Inter", "ui-sans-serif", "system-ui"],
       },
       borderRadius: {
         lg: "var(--radius)",
