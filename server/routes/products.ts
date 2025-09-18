@@ -59,3 +59,44 @@ export const createProduct: RequestHandler = async (req, res) => {
     res.status(500).json({ error: err?.message || "Failed to create product" });
   }
 };
+
+const updateProductSchema = createProductSchema.partial();
+
+export const updateProduct: RequestHandler = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const changes = updateProductSchema.parse(req.body);
+    const { products } = await getCollections();
+    const now = new Date().toISOString();
+    await products.updateOne({ _id: id }, { $set: { ...changes, updatedAt: now } });
+    const updated = (await products.findOne({ _id: id }, { projection: { _id: 0 } })) as Product | null;
+    if (!updated) return res.status(404).json({ error: "Product not found" });
+    res.json({ product: updated });
+  } catch (err: any) {
+    if (err instanceof z.ZodError) return res.status(400).json({ error: err.issues.map((i) => i.message).join(", ") });
+    res.status(500).json({ error: err?.message || "Failed to update product" });
+  }
+};
+
+export const deleteProduct: RequestHandler = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { products } = await getCollections();
+    const r = await products.deleteOne({ _id: id });
+    if (r.deletedCount === 0) return res.status(404).json({ error: "Product not found" });
+    res.json({ ok: true });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Failed to delete product" });
+  }
+};
+
+export const listCategories: RequestHandler = async (_req, res) => {
+  try {
+    const { products } = await getCollections();
+    const cats = await products.distinct("category");
+    res.json({ categories: cats.filter(Boolean).sort() });
+  } catch (err: any) {
+    if (err?.message?.includes("MONGODB_URI")) return res.json({ categories: [] });
+    res.status(500).json({ error: err?.message || "Failed to list categories" });
+  }
+};
