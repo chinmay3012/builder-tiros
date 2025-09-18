@@ -23,6 +23,9 @@ export const listProducts: RequestHandler = async (_req, res) => {
       .toArray()) as Product[];
     res.json({ products: docs });
   } catch (err: any) {
+    if (err?.message?.includes("MONGODB_URI")) {
+      return res.json({ products: [] });
+    }
     res.status(500).json({ error: err?.message || "Failed to list products" });
   }
 };
