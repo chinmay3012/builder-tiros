@@ -42,3 +42,57 @@ export interface ListProductsResponse {
 export interface CreateProductResponse {
   product: Product;
 }
+
+// Auth/User domain
+export interface User {
+  id: string; // auth0 sub or custom id
+  email: string;
+  name?: string;
+  picture?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Cart domain
+export interface CartItem {
+  productId: string;
+  quantity: number;
+}
+
+export interface Cart {
+  userId: string;
+  items: CartItem[];
+  updatedAt: string;
+}
+
+// Orders
+export interface OrderItem {
+  productId: string;
+  title: string;
+  price: number;
+  quantity: number;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  items: OrderItem[];
+  total: number;
+  status: "pending" | "paid" | "shipped" | "completed" | "canceled";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpsertUserRequest {
+  id: string;
+  email: string;
+  name?: string;
+  picture?: string;
+}
+
+export interface UpsertUserResponse { user: User }
+
+export interface GetCartResponse { cart: Cart }
+export interface ModifyCartRequest { productId: string; quantity: number }
+export interface CreateOrderRequest { userId: string; items: OrderItem[]; total: number }
+export interface CreateOrderResponse { order: Order }
