@@ -5,6 +5,9 @@ let db: Db | null = null;
 
 export type Collections = {
   products: Collection;
+  users: Collection;
+  carts: Collection;
+  orders: Collection;
 };
 
 export async function getDb(): Promise<Db> {
