@@ -1,62 +1,65 @@
-import { DemoResponse } from "@shared/api";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ListProductsResponse } from "@shared/api";
+import ProductCard from "@/components/shop/ProductCard";
+import { Link } from "react-router-dom";
+
+function Hero() {
+  return (
+    <section className="relative">
+      <div className="container">
+        <div className="mt-6 overflow-hidden rounded-2xl border bg-black text-white">
+          <div className="relative p-8 md:p-14">
+            <div className="absolute right-6 top-6">
+              <Link to="/shop" className="inline-block rounded-md bg-brand px-4 py-2 font-medium text-black uppercase tracking-wide">Explore Now</Link>
+            </div>
+            <h1 className="font-display text-[40px] md:text-[88px] leading-none tracking-[0.25em]">TIROS</h1>
+            <div className="mt-6 h-56 md:h-80 rounded-xl bg-neutral-900" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function Index() {
-  const [exampleFromServer, setExampleFromServer] = useState("");
-  // Fetch users on component mount
-  useEffect(() => {
-    fetchDemo();
-  }, []);
-
-  // Example of how to fetch data from the server (if needed)
-  const fetchDemo = async () => {
-    try {
-      const response = await fetch("/api/demo");
-      const data = (await response.json()) as DemoResponse;
-      setExampleFromServer(data.message);
-    } catch (error) {
-      console.error("Error fetching hello:", error);
-    }
-  };
+  const { data } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const res = await fetch("/api/products");
+      if (!res.ok) throw new Error("Failed to fetch products");
+      return (await res.json()) as ListProductsResponse;
+    },
+  });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="text-center">
-        {/* TODO: FUSION_GENERATION_APP_PLACEHOLDER replace everything here with the actual app! */}
-        <h1 className="text-2xl font-semibold text-slate-800 flex items-center justify-center gap-3">
-          <svg
-            className="animate-spin h-8 w-8 text-slate-400"
-            viewBox="0 0 50 50"
-          >
-            <circle
-              className="opacity-30"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-            />
-            <circle
-              className="text-slate-600"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-              strokeDasharray="100"
-              strokeDashoffset="75"
-            />
-          </svg>
-          Generating your app...
-        </h1>
-        <p className="mt-4 text-slate-600 max-w-md">
-          Watch the chat on the left for updates that might need your attention
-          to finish generating
-        </p>
-        <p className="mt-4 hidden max-w-md">{exampleFromServer}</p>
-      </div>
+    <div>
+      <Hero />
+
+      <section className="container py-12">
+        <div className="mb-6 h-2 w-40 bg-black" />
+        <h2 className="text-center font-display text-2xl tracking-[0.25em]">BEST SELLER</h2>
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {data?.products?.slice(0, 8).map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Link to="/shop" className="inline-block rounded-md border px-5 py-2 uppercase tracking-wide">View All</Link>
+        </div>
+      </section>
+
+      <section className="bg-neutral-950 text-white">
+        <div className="container py-16">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="rounded-xl border border-white/10 p-6">
+              <div className="aspect-square bg-black rounded-lg" />
+            </div>
+            <div className="rounded-xl border border-white/10 p-6">
+              <div className="aspect-square bg-black rounded-lg" />
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
