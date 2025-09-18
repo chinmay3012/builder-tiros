@@ -6,6 +6,9 @@ function Header() {
   const nav = [
     { to: "/", label: "Home" },
     { to: "/shop", label: "Shop" },
+    { to: "/about", label: "About" },
+    { to: "/reviews", label: "Reviews" },
+    { to: "/cart", label: "Cart" },
     { to: "/admin", label: "Admin" },
   ];
   return (
